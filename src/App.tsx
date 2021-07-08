@@ -24,7 +24,8 @@ const App = () => {
     )();
   }, []);
 
-  const handleChange = useCallback((e: any) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log(e);
     setSelectedCountryId(e.target.value);
     // const index = countries?.find((country: CountryType): boolean => country.ISO2 === e.target.value);
     // console.log(index);
