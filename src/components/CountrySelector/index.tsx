@@ -4,7 +4,7 @@ import { CountryType } from '../../App';
 import { FC } from 'react';
 
 interface Props {
-    handleChange?: (e: React.ChangeEvent<HTMLSelectElement>) => any;
+    handleChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
     countries: CountryType[];
     value: string;
 }

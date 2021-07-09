@@ -1,7 +1,6 @@
-import { useCallback } from "react";
 import { useEffect, useState } from "react";
 import countryApi from "./api/fetchData";
-import CountrySelector from "./components/CountrySelector"
+import CountrySelector from "./components/CountrySelector";
 import Highlight from "./components/Highlight";
 import Summary from "./components/Summary";
 
@@ -11,34 +10,61 @@ export interface CountryType {
   Slug: string;
 }
 
+export interface CountryData {
+  Active: number;
+  City: string;
+  CityCode: string;
+  Confirmed: number;
+  Country: string;
+  CountryCode: string;
+  Date: Date;
+  Deaths: number;
+  ID: string;
+  Lat: string;
+  Lon: string;
+  Province: string;
+  Recovered: number;
+}
+
 const App = () => {
   const [countries, setCountries] = useState<CountryType[]>([])
   const [selectedCountryId, setSelectedCountryId] = useState<string>('');
+  const [report, setReport] = useState<Array<CountryData>>([]);
 
   useEffect(() => {
-    (
-      async () => {
-        const res = await countryApi.gettAll();
-        setCountries(res.data);
-      }
-    )();
+    const fetchCountryData = async () => {
+      const res = await countryApi.gettAll();
+      setCountries(res.data);
+
+      setSelectedCountryId('vn');
+    }
+
+    fetchCountryData();
   }, []);
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(e);
+  const getReportByCountry = async (slug: string) => {
+    const res = await countryApi.getByCountry(slug);
+    res.data.pop();
+    setReport(res.data);
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCountryId(e.target.value);
-    // const index = countries?.find((country: CountryType): boolean => country.ISO2 === e.target.value);
-    // console.log(index);
+  };
 
-    // const res = await countryApi.getByCountry(Slug);
-    // console.log(res);
-  }, []);
+  useEffect(() => {
+    if (selectedCountryId) {
+      const selectedCountry = countries.find((country: CountryType): boolean => country.ISO2.toLowerCase() === selectedCountryId);
+  
+      getReportByCountry(selectedCountry!.Slug);
+    }
+  }, [countries, selectedCountryId]);
 
   return (
     <>
       <CountrySelector countries={countries} handleChange={handleChange} value={selectedCountryId} />
-      <Highlight />
-      <Summary />
+      <Highlight report={report} />
+      <Summary selectedCountryId={selectedCountryId} report={report} />
     </>
   );
 }

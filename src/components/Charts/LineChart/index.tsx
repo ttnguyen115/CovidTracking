@@ -1,13 +1,20 @@
 import Highchart from 'highcharts'
 import HightcharsReact from 'highcharts-react-official'
 import React, { FC, useEffect, useState } from 'react'
+import { CountryData } from '../../../App';
+import moment from 'moment'
+import { ButtonGroup, Button } from '@material-ui/core';
+
+interface Props {
+    data: Array<CountryData>;
+}
 
 interface Options {
     chart: { height: number; };
 
     title: { text: string; };
 
-    xAxis: { categories: any; crosshair: boolean; };
+    xAxis: { categories: string[]; crosshair: boolean; };
 
     color: Array<string>;
 
@@ -20,7 +27,9 @@ interface Options {
     series: Array<{ name: string; data: any }>;
 }
 
-const generateOptions = (data: any): Options => {
+const generateOptions = (data: Array<CountryData>): Options => {
+    const categories = data.map((item: CountryData): string => moment(item.Date).format('DD/MM/YYYY'));
+
     return {
         chart: {
             height: 500
@@ -31,7 +40,7 @@ const generateOptions = (data: any): Options => {
         },
 
         xAxis: {
-            categories: '',
+            categories: categories,
             crosshair: true,
         },
 
@@ -75,20 +84,43 @@ const generateOptions = (data: any): Options => {
     }
 }
 
-const LineChart: FC<any> = ({ data }) => {
+const LineChart: FC<Props> = ({ data }) => {
     const [options, setOptions] = useState({});
+    const [filter, setFilter] = useState('all');
 
     useEffect(() => {
-        setOptions(generateOptions(data));
+        let customData: Array<CountryData> = [];
 
-    }, [data]);
+        switch (filter) {
+            case 'all':
+                customData = data;
+                break;
+        
+            case '30':
+                customData = data.slice(data.length - 30);
+                break;
+            
+            case '7':
+                customData = data.slice(data.length - 7);
+                break;
+
+            default:
+                customData = data;
+                break;
+        }
+
+        setOptions(generateOptions(customData));
+    }, [data, filter]);
 
     return (
         <div>
-            <HightcharsReact
-                highcharts={Highchart}
-                options={options}
-            />
+            <ButtonGroup size="small" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button color={filter === 'all' ? 'secondary' : undefined} onClick={() => setFilter('all')} >All</Button>
+                <Button color={filter === '30' ? 'secondary' : undefined} onClick={() => setFilter('30')} >30 days ago</Button>
+                <Button color={filter === '7' ? 'secondary' : undefined} onClick={() => setFilter('7')} >7 days ago</Button>
+            </ButtonGroup>
+
+            <HightcharsReact highcharts={Highchart} options={options} />
         </div>
     )
 }
