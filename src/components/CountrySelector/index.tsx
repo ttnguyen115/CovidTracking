@@ -1,7 +1,6 @@
-import React from 'react'
-import { FormControl, InputLabel, NativeSelect, FormHelperText } from '@material-ui/core';
+import { FormControl, FormHelperText, InputLabel, NativeSelect } from '@material-ui/core';
+import React, { FC } from 'react';
 import { CountryType } from '../../App';
-import { FC } from 'react';
 
 interface Props {
     handleChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;

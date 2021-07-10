@@ -125,4 +125,4 @@ const LineChart: FC<Props> = ({ data }) => {
     )
 }
 
-export default LineChart
+export default React.memo(LineChart);

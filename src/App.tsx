@@ -1,8 +1,15 @@
+import '@fontsource/roboto';
+import { Typography, Container } from '@material-ui/core';
+import { sortBy } from 'lodash';
+import moment from "moment";
+import 'moment/locale/vi';
 import { useEffect, useState } from "react";
 import countryApi from "./api/fetchData";
 import CountrySelector from "./components/CountrySelector";
 import Highlight from "./components/Highlight";
 import Summary from "./components/Summary";
+
+moment.locale('vi');
 
 export interface CountryType {
   Country: string;
@@ -34,7 +41,10 @@ const App = () => {
   useEffect(() => {
     const fetchCountryData = async () => {
       const res = await countryApi.gettAll();
-      setCountries(res.data);
+
+      const sortedCountry = sortBy(res.data, 'Country');
+
+      setCountries(sortedCountry);
 
       setSelectedCountryId('vn');
     }
@@ -61,11 +71,15 @@ const App = () => {
   }, [countries, selectedCountryId]);
 
   return (
-    <>
+    <Container style={{ marginTop: 20 }}>
+      <Typography variant="h2" component="h2">
+        Covid-19 Tracking Map
+      </Typography>
+      <Typography>{moment().format('LLL')}</Typography>
       <CountrySelector countries={countries} handleChange={handleChange} value={selectedCountryId} />
       <Highlight report={report} />
       <Summary selectedCountryId={selectedCountryId} report={report} />
-    </>
+    </Container>
   );
 }
 

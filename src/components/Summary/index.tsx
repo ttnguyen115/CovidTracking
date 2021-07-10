@@ -24,7 +24,7 @@ const Summary: FC<Props> = ({ report, selectedCountryId }) => {
     }, [selectedCountryId]);
 
     return (
-        <Grid container spacing={3}>
+        <Grid container spacing={3} style={{ marginTop: 20 }}>
             <Grid item sm={8} xs={12}>
                 <LineChart data={report} />
             </Grid>

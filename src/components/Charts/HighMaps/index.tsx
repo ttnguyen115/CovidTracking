@@ -107,4 +107,4 @@ const HighMaps: FC<Props> = ({ mapData = [] }) => {
     )
 }
 
-export default HighMaps
+export default React.memo(HighMaps);
